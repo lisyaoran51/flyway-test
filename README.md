@@ -26,3 +26,8 @@ docker push "$CI_REGISTRY/$PROJECT_ID_GITLAB/$CI_APPLICATION_REPOSITORY:$TAG"
 #deploy
 kubectl apply -f deploy/job.yaml
 ```
+
+## pros and cons
+
+- no rollback
+- run multiple times for different schema (or write all schemas in one migration)
