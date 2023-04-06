@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: mms
+  name: mms-flyway-<CI_PIPELINE_ID>
+spec:
+  # 標記失敗狀態之前的重試次數, 預設為6, 達到允許重試次數就會被終止
+  backoffLimit: 3
+  # 設定job成功後是否要刪除。1)若沒有設定，Job 就永遠不會被清除 2)若設定為 0，則 Job 執行完畢之後就會被馬上清除
+  ttlSecondsAfterFinished: 86400
+  template:
+    spec:
+      containers:
+        - name: mms-flyway-<CI_PIPELINE_ID>
+          image: <CI_REGISTRY>/<PROJECT_ID>/<CI_APPLICATION_REPOSITORY>:<TAGS>
+          resources:
+            limits:
+              cpu: "1"
+              memory: "4Gi"
+            requests:
+              cpu: "100m"
+              memory: "4Gi"
+          env:
+            - name: JAVA_OPTS
+              valueFrom:
+                secretKeyRef:
+                  name: mms-backend-secret
+                  key: java_opts
+            - name: ACTIVE
+              value: "dev"
+            - name: MMS_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mms-flyway-secret
+                  key: mms_db_uri
+            - name: MMS_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mms-flyway-secret
+                  key: mms_db_username
+            - name: MMS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mms-flyway-secret
+                  key: mms_db_password
+      restartPolicy: Never
