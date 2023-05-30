@@ -1,8 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  namespace: mms
-  name: mms-flyway-<CI_PIPELINE_ID>
+  namespace: tttt
+  name: flyway-<CI_PIPELINE_ID>
 spec:
   # 標記失敗狀態之前的重試次數, 預設為6, 達到允許重試次數就會被終止
   backoffLimit: 3
@@ -11,7 +11,7 @@ spec:
   template:
     spec:
       containers:
-        - name: mms-flyway-<CI_PIPELINE_ID>
+        - name: flyway-<CI_PIPELINE_ID>
           image: <CI_REGISTRY>/<PROJECT_ID>/<CI_APPLICATION_REPOSITORY>:<TAGS>
           resources:
             limits:
@@ -24,23 +24,23 @@ spec:
             - name: JAVA_OPTS
               valueFrom:
                 secretKeyRef:
-                  name: mms-backend-secret
+                  name: tttt-backend-secret
                   key: java_opts
             - name: ACTIVE
               value: "dev"
-            - name: MMS_DB_URI
+            - name: TTTT_DB_URI
               valueFrom:
                 secretKeyRef:
-                  name: mms-flyway-secret
-                  key: mms_db_uri
-            - name: MMS_DB_USERNAME
+                  name: tttt-flyway-secret
+                  key: tttt_db_uri
+            - name: TTTT_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mms-flyway-secret
-                  key: mms_db_username
-            - name: MMS_DB_PASSWORD
+                  name: tttt-flyway-secret
+                  key: tttt_db_username
+            - name: TTTT_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mms-flyway-secret
-                  key: mms_db_password
+                  name: tttt-flyway-secret
+                  key: tttt_db_password
       restartPolicy: Never
